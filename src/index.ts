@@ -14,9 +14,9 @@ app.use(cors());
 app.use(express.json());
 
 // Routes
-app.get('/api/products', async (req: Request, res: Response) => {
+app.get('/api/products', async (_req: Request, res: Response) => {
   try {
-    const { minPrice, maxPrice, minRating } = req.query;
+    const { minPrice, maxPrice, minRating } = _req.query;
     
     if (minPrice || maxPrice || minRating) {
       const products = await getFilteredProducts(
@@ -28,16 +28,16 @@ app.get('/api/products', async (req: Request, res: Response) => {
     }
     
     const products = await getAllProducts();
-    res.json(products);
+    return res.json(products);
   } catch (error) {
     console.error('Error fetching products:', error);
-    res.status(500).json({ error: 'Internal server error' });
+    return res.status(500).json({ error: 'Internal server error' });
   }
 });
 
 // Health check endpoint
-app.get('/health', (req: Request, res: Response) => {
-  res.json({ status: 'ok' });
+app.get('/health', (_req: Request, res: Response) => {
+  return res.json({ status: 'ok' });
 });
 
 app.listen(port, () => {
