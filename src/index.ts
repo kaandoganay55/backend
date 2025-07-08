@@ -7,13 +7,24 @@ import { getAllProducts, getFilteredProducts } from './services/products';
 dotenv.config();
 
 const app = express();
-const port = process.env.PORT || 3001;
+// Render.com sets PORT environment variable automatically
+const port = process.env.PORT || 10000;
 
 // Middleware
 app.use(cors());
 app.use(express.json());
 
 // Routes
+app.get('/', (_req: Request, res: Response) => {
+  return res.json({ 
+    message: 'Jewelry Store API',
+    endpoints: {
+      products: '/api/products',
+      health: '/health'
+    }
+  });
+});
+
 app.get('/api/products', async (_req: Request, res: Response) => {
   try {
     const { minPrice, maxPrice, minRating } = _req.query;
@@ -37,9 +48,17 @@ app.get('/api/products', async (_req: Request, res: Response) => {
 
 // Health check endpoint
 app.get('/health', (_req: Request, res: Response) => {
-  return res.json({ status: 'ok' });
+  return res.json({ 
+    status: 'ok',
+    timestamp: new Date().toISOString(),
+    port: port
+  });
 });
 
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
+  console.log('Available routes:');
+  console.log('- GET /');
+  console.log('- GET /api/products');
+  console.log('- GET /health');
 }); 
